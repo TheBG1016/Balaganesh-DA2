@@ -9,6 +9,11 @@ extern "C" {
     // EXPORTED FUNCTIONS TO JAVASCRIPT
     
     EMSCRIPTEN_KEEPALIVE
+    bool patientExists_js(const char* id) {
+        return system_instance.patientExists(id);
+    }
+    
+    EMSCRIPTEN_KEEPALIVE
     void registerPatient_js(const char* id, const char* name, int age, const char* phone) {
         system_instance.registerPatient(id, name, age, phone);
     }

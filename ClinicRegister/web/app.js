@@ -61,7 +61,18 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
         currentUserRole.innerText = 'Receptionist';
         recDashboard.classList.remove('hidden');
     } else {
-        loggedInPatientId = document.getElementById('login-patient-id').value;
+        const attemptedId = document.getElementById('login-patient-id').value;
+        const exists = Module.ccall('patientExists_js', 'boolean', ['string'], [attemptedId]);
+        
+        if (!exists) {
+            alert("Invalid Login: This Patient ID has not been registered yet.");
+            // Keep them on the login view
+            loginView.classList.remove('hidden');
+            userControls.classList.add('hidden');
+            return;
+        }
+
+        loggedInPatientId = attemptedId;
         currentUserRole.innerText = 'Patient: ' + loggedInPatientId;
         patDashboard.classList.remove('hidden');
         loadMyHistory();
