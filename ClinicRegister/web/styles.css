@@ -514,3 +514,22 @@ button { font-family: inherit; cursor: pointer; transition: all 0.2s ease; borde
     font-size: 13px;
     color: var(--text-secondary);
 }
+
+/* LOGOUT BUTTON */
+.btn-logout {
+    background-color: #EF4444;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-logout:hover {
+    background-color: #DC2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
