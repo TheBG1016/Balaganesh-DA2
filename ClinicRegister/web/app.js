@@ -16,7 +16,10 @@ window.Module.print = (function() {
     return function(text) {
         if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
         console.log("C++ Engine (Buffer):", text);
-        printBuffer.push(text);
+        const lines = text.split('\n');
+        for(let line of lines) {
+            if(line.trim()) printBuffer.push(line.trim());
+        }
     };
 })();
 window.Module.printErr = function(text) {
@@ -112,14 +115,19 @@ function renderNeatUI() {
         if (printBuffer.length === 2 && printBuffer[1].includes('No visits found')) {
             html += `<div class="alert alert-error">${printBuffer[1]}</div>`;
         } else {
-            html += `<table class="data-table"><thead><tr><th>Date</th><th>Diagnosis</th><th>Prescription</th></tr></thead><tbody>`;
+            let tableRows = '';
             for(let i=1; i < printBuffer.length; i++) {
+                if (printBuffer[i].includes('No visits found')) continue; 
                 const parts = printBuffer[i].split('|').map(p => p.trim());
-                if(parts.length === 3) {
-                    html += `<tr><td>${parts[0].replace('Date:', '').trim()}</td><td>${parts[1].replace('Diagnosis:', '').trim()}</td><td>${parts[2].replace('Prescription:', '').trim()}</td></tr>`;
+                if(parts.length >= 3) {
+                    tableRows += `<tr><td>${parts[0].replace('Date:', '').trim()}</td><td>${parts[1].replace('Diagnosis:', '').trim()}</td><td>${parts.slice(2).join('|').replace('Prescription:', '').trim()}</td></tr>`;
+                } else if (printBuffer[i].trim() !== '') {
+                    tableRows += `<tr><td colspan="3">${printBuffer[i]}</td></tr>`;
                 }
             }
-            html += `</tbody></table>`;
+            if (tableRows) {
+                html += `<table class="data-table"><thead><tr><th>Date</th><th>Diagnosis</th><th>Prescription</th></tr></thead><tbody>${tableRows}</tbody></table>`;
+            }
         }
     } 
     else if (printBuffer[0].includes('more than')) {
@@ -127,14 +135,19 @@ function renderNeatUI() {
         if (printBuffer.length === 2 && printBuffer[1].includes('No frequent visitors')) {
             html += `<div class="alert alert-error">${printBuffer[1]}</div>`;
         } else {
-            html += `<table class="data-table"><thead><tr><th>Patient ID</th><th>Total Visits</th></tr></thead><tbody>`;
+            let tableRows = '';
             for(let i=1; i < printBuffer.length; i++) {
+                if (printBuffer[i].includes('No frequent visitors')) continue;
                 const parts = printBuffer[i].split('|').map(p => p.trim());
-                if(parts.length === 2) {
-                    html += `<tr><td><strong>${parts[0].replace('Patient ID:', '').trim()}</strong></td><td><span class="badge" style="margin:0">${parts[1].replace('Total Visits:', '').trim()}</span></td></tr>`;
+                if(parts.length >= 2) {
+                    tableRows += `<tr><td><strong>${parts[0].replace('Patient ID:', '').trim()}</strong></td><td><span class="badge" style="margin:0">${parts[1].replace('Total Visits:', '').trim()}</span></td></tr>`;
+                } else if (printBuffer[i].trim() !== '') {
+                    tableRows += `<tr><td colspan="2">${printBuffer[i]}</td></tr>`;
                 }
             }
-            html += `</tbody></table>`;
+            if (tableRows) {
+                html += `<table class="data-table"><thead><tr><th>Patient ID</th><th>Total Visits</th></tr></thead><tbody>${tableRows}</tbody></table>`;
+            }
         }
     } 
     else if (printBuffer[0].includes('Total visits in')) {
