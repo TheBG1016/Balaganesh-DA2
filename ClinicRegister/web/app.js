@@ -180,15 +180,9 @@ document.getElementById('form-register').addEventListener('submit', (e) => {
     e.target.reset();
 
     if (printBuffer.length > 0 && !printBuffer[0].includes('Error')) {
-        try {
-            const activeFS = window.FS || (window.Module && window.Module.FS);
-            if(activeFS) {
-                let existing = '';
-                try { existing = activeFS.readFile('patients.txt', { encoding: 'utf8' }); } catch(err){}
-                activeFS.writeFile('patients.txt', existing + `${id}|${name}|${age}|${phone}\n`);
-                if(loginType === 'receptionist') populateDashboard();
-            }
-        } catch(err) {}
+        let existing = localStorage.getItem('patients_db') || '';
+        localStorage.setItem('patients_db', existing + `${id}|${name}|${age}|${phone}\n`);
+        if(loginType === 'receptionist') populateDashboard();
     }
 });
 
@@ -204,15 +198,9 @@ document.getElementById('form-visit').addEventListener('submit', (e) => {
     e.target.reset();
 
     if (printBuffer.length > 0 && !printBuffer[0].includes('Error')) {
-        try {
-            const activeFS = window.FS || (window.Module && window.Module.FS);
-            if(activeFS) {
-                let existing = '';
-                try { existing = activeFS.readFile('visits.txt', { encoding: 'utf8' }); } catch(err){}
-                activeFS.writeFile('visits.txt', existing + `${id}|${date}|${diag}|${pres}\n`);
-                if(loginType === 'receptionist') populateDashboard();
-            }
-        } catch(err) {}
+        let existing = localStorage.getItem('visits_db') || '';
+        localStorage.setItem('visits_db', existing + `${id}|${date}|${diag}|${pres}\n`);
+        if(loginType === 'receptionist') populateDashboard();
     }
 });
 
@@ -257,13 +245,8 @@ function switchNav(view) {
 
 function populateDashboard() {
     try {
-        let patientsData = '';
-        let visitsData = '';
-        const activeFS = window.FS || (window.Module && window.Module.FS);
-        if(activeFS) {
-            try { patientsData = activeFS.readFile('patients.txt', { encoding: 'utf8' }); } catch(e){}
-            try { visitsData = activeFS.readFile('visits.txt', { encoding: 'utf8' }); } catch(e){}
-        }
+        let patientsData = localStorage.getItem('patients_db') || '';
+        let visitsData = localStorage.getItem('visits_db') || '';
 
         const patients = patientsData.split('\n').filter(p => p.trim() !== '');
         const visits = visitsData.split('\n').filter(v => v.trim() !== '');
@@ -381,3 +364,32 @@ function calculateBMI() {
 
     document.getElementById('bmi-result-card').classList.remove('hidden');
 }
+
+// ------ INIT SYNC ------
+window.addEventListener('load', () => {
+    // Wait slightly for WASM Module to initialize
+    setTimeout(() => {
+        if (!window.Module || !window.Module.ccall) return;
+        
+        const savedPatients = localStorage.getItem('patients_db');
+        if (savedPatients) {
+            savedPatients.split('\n').filter(p=>p.trim()!=='').forEach(line => {
+                const parts = line.split('|');
+                if(parts.length >= 4) {
+                   Module.ccall('registerPatient_js', null, ['string', 'string', 'number', 'string'], [parts[0], parts[1], parseInt(parts[2]), parts[3]]);
+                }
+            });
+        }
+
+        const savedVisits = localStorage.getItem('visits_db');
+        if (savedVisits) {
+            savedVisits.split('\n').filter(p=>p.trim()!=='').forEach(line => {
+                const parts = line.split('|');
+                if(parts.length >= 4) {
+                   Module.ccall('addVisit_js', null, ['string', 'string', 'string', 'string'], [parts[0], parts[1], parts[2], parts[3]]);
+                }
+            });
+        }
+        clearTerminal();
+    }, 500);
+});
