@@ -345,30 +345,7 @@ button { font-family: inherit; cursor: pointer; transition: all 0.2s ease; borde
 
 .full-width { width: 100%; }
 
-/* OUTPUT MODAL FOR RESULTS */
-.output-container {
-    margin-top: 40px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-md);
-}
-
-.output-header {
-    background: var(--bg-main);
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--border);
-    border-top-left-radius: var(--radius-md);
-    border-top-right-radius: var(--radius-md);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.output-header h3 { font-size: 14px; color: var(--accent-green); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;}
-.close-btn { background: none; color: var(--text-secondary); font-size: 16px; }
-.close-btn:hover { color: var(--text-primary); }
-
+/* MODALS */
 .term {
     padding: 20px;
     font-family: monospace;
@@ -378,10 +355,10 @@ button { font-family: inherit; cursor: pointer; transition: all 0.2s ease; borde
     overflow-y: auto;
     white-space: pre-wrap;
     background: #F8FAFC;
-    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    border-radius: var(--radius-md);
+    margin-top: 16px;
 }
 
-/* MODALS */
 .modal {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0,0,0,0.5);

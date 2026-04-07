@@ -170,15 +170,14 @@
             </section>
 
         </main>
-        
-        <!-- GLOBAL NEAT RESULTS OUTPUT CARD (For C++ Responses) -->
-        <div id="output-container" class="output-container hidden">
-            <div class="output-header">
-                <h3>System Results</h3>
-                <button onclick="document.getElementById('output-container').classList.add('hidden'); document.getElementById('neat-results').innerHTML='';" class="close-btn">✖</button>
+        <!-- GLOBAL NEAT RESULTS OUTPUT MODAL (For C++ Responses) -->
+        <div id="output-container" class="modal hidden">
+            <div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
+                <span class="close-modal" onclick="document.getElementById('output-container').classList.add('hidden'); document.getElementById('neat-results').innerHTML='';">&times;</span>
+                <h2 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px;">System Records</h2>
+                <div id="neat-results"></div>
+                <pre id="output-terminal" class="term hidden"></pre>
             </div>
-            <div id="neat-results"></div>
-            <pre id="output-terminal" class="term hidden"></pre>
         </div>
     </div>
 
