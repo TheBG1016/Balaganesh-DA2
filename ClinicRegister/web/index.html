@@ -99,14 +99,73 @@
             </section>
 
             <!-- VIEW 3: PATIENT DASHBOARD -->
-            <section id="patient-dashboard" class="view hidden">
-                <div class="dashboard-header">
-                    <h2>My Health Record</h2>
-                    <p>View your past visits and diagnosis information.</p>
+            <section id="patient-dashboard" class="view hidden patient-dashboard">
+                <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h2>My Health Dashboard</h2>
+                        <p>Track your wellness, calculate BMI, and access your records.</p>
+                    </div>
+                    <button class="btn-primary" onclick="loadMyHistory()">View My Patient Data</button>
                 </div>
                 
-                <div class="card">
-                    <button class="btn-primary" onclick="loadMyHistory()">Load My Data</button>
+                <div class="dashboard-columns">
+                    <div class="column-card">
+                        <h3 class="col-title">HEALTHY HABITS</h3>
+                        <div class="habits-list">
+                            <div class="habit-item">
+                                <span class="habit-icon">💧</span>
+                                <div>
+                                    <h4>Stay Hydrated</h4>
+                                    <p>Drink at least 8 glasses of water every day to keep your body functioning optimally.</p>
+                                </div>
+                            </div>
+                            <div class="habit-item">
+                                <span class="habit-icon">🏃‍♂️</span>
+                                <div>
+                                    <h4>Regular Exercise</h4>
+                                    <p>Engage in 30 minutes of moderate activity like walking or jogging 5 times a week.</p>
+                                </div>
+                            </div>
+                            <div class="habit-item">
+                                <span class="habit-icon">🥗</span>
+                                <div>
+                                    <h4>Balanced Diet</h4>
+                                    <p>Incorporate a variety of fruits, vegetables, and lean proteins in your daily meals.</p>
+                                </div>
+                            </div>
+                            <div class="habit-item">
+                                <span class="habit-icon">😴</span>
+                                <div>
+                                    <h4>Adequate Sleep</h4>
+                                    <p>Prioritize 7-9 hours of consistent, restful sleep each night to allow your body to recover.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="column-card">
+                        <h3 class="col-title">BMI CALCULATOR</h3>
+                        <div class="bmi-container">
+                            <p class="bmi-desc">Enter your height and weight to calculate your Body Mass Index (BMI).</p>
+                            <div class="form-group">
+                                <label>Height (cm)</label>
+                                <input type="number" id="bmi-height" placeholder="e.g. 175">
+                            </div>
+                            <div class="form-group">
+                                <label>Weight (kg)</label>
+                                <input type="number" id="bmi-weight" placeholder="e.g. 70">
+                            </div>
+                            <button class="btn-primary full-width" onclick="calculateBMI()">Calculate BMI</button>
+                            
+                            <div id="bmi-result-card" class="bmi-result hidden">
+                                <div class="bmi-score-wrapper">
+                                    <span id="bmi-score" class="bmi-score">0.0</span>
+                                </div>
+                                <h4 id="bmi-category" class="bmi-category">Normal</h4>
+                                <p id="bmi-msg" class="bmi-msg">You have a healthy weight.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 

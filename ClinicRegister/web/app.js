@@ -314,3 +314,54 @@ function populateDashboard() {
         console.error('Error populating dashboard', err);
     }
 }
+
+// ------ PATIENT DASHBOARD LOGIC ------
+function calculateBMI() {
+    const heightStr = document.getElementById('bmi-height').value;
+    const weightStr = document.getElementById('bmi-weight').value;
+    const heightCm = parseFloat(heightStr);
+    const weightKg = parseFloat(weightStr);
+
+    if (!heightCm || !weightKg || heightCm <= 0 || weightKg <= 0) {
+        alert("Please enter valid positive numbers for height and weight.");
+        return;
+    }
+
+    const heightM = heightCm / 100;
+    const bmi = (weightKg / (heightM * heightM)).toFixed(1);
+
+    const scoreElem = document.getElementById('bmi-score');
+    const categoryElem = document.getElementById('bmi-category');
+    const msgElem = document.getElementById('bmi-msg');
+
+    scoreElem.innerText = bmi;
+
+    let color = '';
+    let category = '';
+    let msg = '';
+
+    if (bmi < 18.5) {
+        color = '#F59E0B';
+        category = 'Underweight';
+        msg = 'You are below the healthy weight range. Consider consulting a doctor or nutritionist.';
+    } else if (bmi >= 18.5 && bmi < 25) {
+        color = 'var(--accent-green)';
+        category = 'Normal';
+        msg = 'You have a healthy weight. Keep up the good work!';
+    } else if (bmi >= 25 && bmi < 30) {
+        color = '#F59E0B';
+        category = 'Overweight';
+        msg = 'You are above the healthy weight range. A balanced diet and regular exercise can help.';
+    } else {
+        color = '#EF4444';
+        category = 'Obese';
+        msg = 'Your BMI indicates obesity. Please consult a doctor for a health assessment.';
+    }
+
+    scoreElem.style.color = color;
+    categoryElem.style.color = color;
+    categoryElem.innerText = category;
+    msgElem.innerText = msg;
+
+    document.getElementById('bmi-result-card').classList.remove('hidden');
+}
