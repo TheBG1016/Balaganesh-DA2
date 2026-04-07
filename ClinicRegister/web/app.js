@@ -12,23 +12,22 @@ let loginType = 'receptionist';
 let loggedInPatientId = null;
 
 // Override Emscripten's standard output print to draw to our terminal instead of default console
-var Module = {
-    print: (function() {
-        return function(text) {
-            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-            console.log(text);
-            if(outputContainer) {
-                outputContainer.classList.remove('hidden');
-                outputTerminal.textContent += text + "\n";
-                // auto scroll
-                outputTerminal.scrollTop = outputTerminal.scrollHeight;
-            }
-        };
-    })(),
-    printErr: function(text) {
+window.Module = window.Module || {};
+window.Module.print = (function() {
+    return function(text) {
         if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-        console.error(text);
-    }
+        console.log(text);
+        if(outputContainer) {
+            outputContainer.classList.remove('hidden');
+            outputTerminal.textContent += text + "\n";
+            // auto scroll
+            outputTerminal.scrollTop = outputTerminal.scrollHeight;
+        }
+    };
+})();
+window.Module.printErr = function(text) {
+    if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+    console.error(text);
 };
 
 function clearTerminal() {
