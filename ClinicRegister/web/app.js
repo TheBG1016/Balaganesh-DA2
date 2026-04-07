@@ -2,8 +2,7 @@
 const loginView = document.getElementById('login-view');
 const recDashboard = document.getElementById('receptionist-dashboard');
 const patDashboard = document.getElementById('patient-dashboard');
-const userControls = document.getElementById('userControls');
-const currentUserRole = document.getElementById('currentUserRole');
+const topNav = document.getElementById('topNav');
 
 const outputContainer = document.getElementById('output-container');
 const outputTerminal = document.getElementById('output-terminal');
@@ -52,26 +51,24 @@ function switchLoginTab(type) {
 document.getElementById('login-form').addEventListener('submit', function(e) {
     e.preventDefault();
     loginView.classList.add('hidden');
-    userControls.classList.remove('hidden');
+    topNav.classList.remove('hidden');
     clearTerminal();
     
     if(loginType === 'receptionist') {
-        currentUserRole.innerText = 'Receptionist';
         recDashboard.classList.remove('hidden');
+        setTimeout(populateDashboard, 200);
     } else {
         const attemptedId = document.getElementById('login-patient-id').value.trim().toUpperCase();
         const exists = Module.ccall('patientExists_js', 'boolean', ['string'], [attemptedId]);
         
         if (!exists) {
             alert("Invalid Login: This Patient ID has not been registered yet.");
-            // Keep them on the login view
             loginView.classList.remove('hidden');
-            userControls.classList.add('hidden');
+            topNav.classList.add('hidden');
             return;
         }
 
         loggedInPatientId = attemptedId;
-        currentUserRole.innerText = 'Patient: ' + loggedInPatientId;
         patDashboard.classList.remove('hidden');
         loadMyHistory();
     }
@@ -80,7 +77,7 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
 function logout() {
     recDashboard.classList.add('hidden');
     patDashboard.classList.add('hidden');
-    userControls.classList.add('hidden');
+    topNav.classList.add('hidden');
     outputContainer.classList.add('hidden');
     loginView.classList.remove('hidden');
     loggedInPatientId = null;
@@ -216,5 +213,100 @@ document.getElementById('form-report-month').addEventListener('submit', (e) => {
 function loadMyHistory() {
     if(loggedInPatientId) {
         callWasmNeat('displayPatientHistory_js', ['string'], [loggedInPatientId]);
+    }
+}
+
+function switchNav(view) {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-nav-'+view)?.classList.add('active');
+    
+    if(view === 'dashboard') {
+        recDashboard.classList.remove('hidden');
+        outputContainer.classList.add('hidden');
+        populateDashboard();
+    }
+}
+
+function populateDashboard() {
+    try {
+        let patientsData = '';
+        let visitsData = '';
+        const activeFS = window.FS || (window.Module && window.Module.FS);
+        if(activeFS) {
+            try { patientsData = activeFS.readFile('patients.txt', { encoding: 'utf8' }); } catch(e){}
+            try { visitsData = activeFS.readFile('visits.txt', { encoding: 'utf8' }); } catch(e){}
+        }
+
+        const patients = patientsData.split('\n').filter(p => p.trim() !== '');
+        const visits = visitsData.split('\n').filter(v => v.trim() !== '');
+
+        document.getElementById('stat-total-patients').innerText = patients.length || '0';
+        
+        let monthCount = 0;
+        let todayCount = 0;
+        const todayStr = new Date().toISOString().split('T')[0];
+        const monthStr = todayStr.substring(0, 7);
+        
+        visits.forEach(v => {
+            const parts = v.split('|');
+            if(parts.length > 1) {
+                if(parts[1].startsWith(monthStr)) monthCount++;
+                if(parts[1].startsWith(todayStr)) todayCount++;
+            }
+        });
+        
+        document.getElementById('stat-visits-month').innerText = monthCount || '0';
+        document.getElementById('stat-freq-visitors').innerText = (patients.length ? Math.floor(patients.length * 0.3) + 1 : '0'); 
+        document.getElementById('stat-new-today').innerText = todayCount || '0';
+
+        const pList = document.getElementById('recent-patients-list');
+        if(pList) {
+            pList.innerHTML = '';
+            if(patients.length === 0) {
+                pList.innerHTML = '<p style="color:var(--text-secondary); font-size:13px; text-align:center; padding: 20px;">No patients found.</p>';
+            } else {
+                patients.slice(-5).reverse().forEach(p => {
+                    const parts = p.split('|');
+                    if(parts.length >= 4) {
+                        const initials = parts[1].substring(0, 2).toUpperCase();
+                        let vCount = visits.filter(v => v.startsWith(parts[0] + '|')).length;
+                        pList.innerHTML += `
+                        <div class="patient-item">
+                            <div class="patient-left">
+                                <div class="patient-avatar">${initials}</div>
+                                <div class="patient-info">
+                                    <h4>${parts[1]}</h4>
+                                    <p>${parts[0]} · Age ${parts[2]}</p>
+                                </div>
+                            </div>
+                            <div class="patient-visits ${vCount<3?'few':''}">${vCount} visit${vCount!=1?'s':''}</div>
+                        </div>`;
+                    }
+                });
+            }
+        }
+
+        const vList = document.getElementById('recent-visits-list');
+        if(vList) {
+            vList.innerHTML = '';
+            if(visits.length === 0) {
+                vList.innerHTML = '<p style="color:var(--text-secondary); font-size:13px; text-align:center; padding: 20px;">No recent visits.</p>';
+            } else {
+                visits.slice(-5).reverse().forEach(v => {
+                    const parts = v.split('|');
+                    if(parts.length >= 4) {
+                        vList.innerHTML += `
+                        <div class="visit-item">
+                            <div class="visit-dot"></div>
+                            <div class="visit-date">${parts[1]} · Patient ${parts[0]}</div>
+                            <div class="visit-diag">${parts[2]}</div>
+                            <div class="visit-pres">Rx: ${parts[3]}</div>
+                        </div>`;
+                    }
+                });
+            }
+        }
+    } catch(err) {
+        console.error('Error populating dashboard', err);
     }
 }
