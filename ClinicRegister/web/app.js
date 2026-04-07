@@ -61,7 +61,7 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
         currentUserRole.innerText = 'Receptionist';
         recDashboard.classList.remove('hidden');
     } else {
-        const attemptedId = document.getElementById('login-patient-id').value;
+        const attemptedId = document.getElementById('login-patient-id').value.trim().toUpperCase();
         const exists = Module.ccall('patientExists_js', 'boolean', ['string'], [attemptedId]);
         
         if (!exists) {
@@ -97,8 +97,8 @@ function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 document.getElementById('form-register').addEventListener('submit', (e) => {
     e.preventDefault();
     clearTerminal();
-    const id = document.getElementById('reg-id').value;
-    const name = document.getElementById('reg-name').value;
+    const id = document.getElementById('reg-id').value.trim().toUpperCase();
+    const name = document.getElementById('reg-name').value.trim();
     const age = parseInt(document.getElementById('reg-age').value);
     const phone = document.getElementById('reg-phone').value;
     
@@ -111,7 +111,7 @@ document.getElementById('form-register').addEventListener('submit', (e) => {
 document.getElementById('form-visit').addEventListener('submit', (e) => {
     e.preventDefault();
     clearTerminal();
-    const id = document.getElementById('vis-id').value;
+    const id = document.getElementById('vis-id').value.trim().toUpperCase();
     const date = document.getElementById('vis-date').value;
     const diag = document.getElementById('vis-diag').value;
     const pres = document.getElementById('vis-pres').value;
@@ -124,7 +124,7 @@ document.getElementById('form-visit').addEventListener('submit', (e) => {
 document.getElementById('form-history').addEventListener('submit', (e) => {
     e.preventDefault();
     clearTerminal();
-    const id = document.getElementById('hist-id').value;
+    const id = document.getElementById('hist-id').value.trim().toUpperCase();
     Module.ccall('displayPatientHistory_js', null, ['string'], [id]);
     closeModal('patientHistoryModal');
     e.target.reset();
