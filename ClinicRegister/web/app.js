@@ -54,7 +54,10 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     topNav.classList.remove('hidden');
     clearTerminal();
     
+    const recOnlyBtns = document.querySelectorAll('.rec-only');
+
     if(loginType === 'receptionist') {
+        recOnlyBtns.forEach(btn => btn.style.display = 'inline-block');
         recDashboard.classList.remove('hidden');
         setTimeout(populateDashboard, 200);
     } else {
@@ -68,6 +71,7 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
             return;
         }
 
+        recOnlyBtns.forEach(btn => btn.style.display = 'none');
         loggedInPatientId = attemptedId;
         patDashboard.classList.remove('hidden');
         loadMyHistory();
