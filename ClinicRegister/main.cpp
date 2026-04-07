@@ -20,6 +20,10 @@ int main() {
     while (true) {
         showMenu();
         if (!(std::cin >> choice)) {
+            if (std::cin.eof()) {
+                std::cout << "End of input. Exiting...\n";
+                break;
+            }
             std::cin.clear();
             std::cin.ignore(10000, '\n');
             continue;
