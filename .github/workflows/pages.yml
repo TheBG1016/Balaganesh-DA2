@@ -26,7 +26,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          emcc ../ClinicRegister/main.cpp ../ClinicRegister/HospitalSystem.cpp ../ClinicRegister/Patient.cpp ../ClinicRegister/Visit.cpp -o index.html -s ASYNCIFY -O3 -s EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]' -s NO_EXIT_RUNTIME=0 --preload-file ../ClinicRegister/patients.txt@patients.txt --preload-file ../ClinicRegister/visits.txt@visits.txt || emcc ../ClinicRegister/main.cpp ../ClinicRegister/HospitalSystem.cpp ../ClinicRegister/Patient.cpp ../ClinicRegister/Visit.cpp -o index.html -s ASYNCIFY -O3 -s EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]' -s NO_EXIT_RUNTIME=0
+          emcc ../ClinicRegister/wasm_bindings.cpp ../ClinicRegister/HospitalSystem.cpp ../ClinicRegister/Patient.cpp ../ClinicRegister/Visit.cpp -o clinic.js -s ASYNCIFY -O3 -s EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]' -s NO_EXIT_RUNTIME=0 --preload-file ../ClinicRegister/patients.txt@patients.txt --preload-file ../ClinicRegister/visits.txt@visits.txt || emcc ../ClinicRegister/wasm_bindings.cpp ../ClinicRegister/HospitalSystem.cpp ../ClinicRegister/Patient.cpp ../ClinicRegister/Visit.cpp -o clinic.js -s ASYNCIFY -O3 -s EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]' -s NO_EXIT_RUNTIME=0
           # We provide a default fallback build if preload files don't exist yet
 
       - name: Setup Preload Files Script (Fail-safe)
@@ -34,8 +34,12 @@ jobs:
           if [ ! -f build/patients.txt ]; then
             touch build/patients.txt build/visits.txt
             cd build
-            emcc ../ClinicRegister/main.cpp ../ClinicRegister/HospitalSystem.cpp ../ClinicRegister/Patient.cpp ../ClinicRegister/Visit.cpp -o index.html -s ASYNCIFY -O3 -s EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]' -s NO_EXIT_RUNTIME=0 --preload-file patients.txt@patients.txt --preload-file visits.txt@visits.txt
+            emcc ../ClinicRegister/wasm_bindings.cpp ../ClinicRegister/HospitalSystem.cpp ../ClinicRegister/Patient.cpp ../ClinicRegister/Visit.cpp -o clinic.js -s ASYNCIFY -O3 -s EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]' -s NO_EXIT_RUNTIME=0 --preload-file patients.txt@patients.txt --preload-file visits.txt@visits.txt
+            cd ..
           fi
+
+      - name: Copy Frontend UI
+        run: cp ClinicRegister/web/* build/
 
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v3

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediVault - Hospital Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="icon">⚕</span> MediVault
+            </div>
+            <div class="user-controls hidden" id="userControls">
+                <span id="currentUserRole" class="badge">Role</span>
+                <button onclick="logout()" class="btn-outline">Logout</button>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT -->
+        <main class="main-content">
+            
+            <!-- VIEW 1: LOGIN -->
+            <section id="login-view" class="view active-view">
+                <div class="login-card">
+                    <h1>Welcome Back</h1>
+                    <p class="subtitle">Securely manage patient records</p>
+                    
+                    <div class="login-tabs">
+                        <button class="tab-btn active" onclick="switchLoginTab('receptionist')">Receptionist</button>
+                        <button class="tab-btn" onclick="switchLoginTab('patient')">Patient</button>
+                    </div>
+
+                    <form id="login-form">
+                        <div class="form-group" id="patient-id-group" style="display: none;">
+                            <label>Patient ID</label>
+                            <input type="text" id="login-patient-id" placeholder="Enter your ID">
+                        </div>
+                        <div class="form-group" id="rec-user-group">
+                            <label>Username</label>
+                            <input type="text" id="login-user" placeholder="admin">
+                        </div>
+                        <div class="form-group" id="rec-pass-group">
+                            <label>Password</label>
+                            <input type="password" id="login-pass" placeholder="••••••••">
+                        </div>
+                        <button class="btn-primary full-width" type="submit" id="login-btn">Secure Login</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- VIEW 2: RECEPTIONIST DASHBOARD -->
+            <section id="receptionist-dashboard" class="view hidden">
+                <div class="dashboard-header">
+                    <h2>Reception Overview</h2>
+                    <p>Manage patients and monitor activity.</p>
+                </div>
+                
+                <div class="grid">
+                    <!-- Action Cards -->
+                    <div class="card card-interactive" onclick="openModal('registerPatientModal')">
+                        <div class="card-icon">➕</div>
+                        <h3>Register Patient</h3>
+                        <p>Add a new patient profile</p>
+                    </div>
+                    
+                    <div class="card card-interactive" onclick="openModal('addVisitModal')">
+                        <div class="card-icon">📋</div>
+                        <h3>Add Visit Record</h3>
+                        <p>Log a new diagnosis and prescription</p>
+                    </div>
+
+                    <div class="card card-interactive" onclick="openModal('patientHistoryModal')">
+                        <div class="card-icon">🔍</div>
+                        <h3>View History</h3>
+                        <p>Search a patient's historical records</p>
+                    </div>
+
+                    <div class="card card-interactive" onclick="openModal('reportsModal')">
+                        <div class="card-icon">📊</div>
+                        <h3>Generate Reports</h3>
+                        <p>View total & frequent visitors</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 3: PATIENT DASHBOARD -->
+            <section id="patient-dashboard" class="view hidden">
+                <div class="dashboard-header">
+                    <h2>My Health Record</h2>
+                    <p>View your past visits and diagnosis information.</p>
+                </div>
+                
+                <div class="card">
+                    <button class="btn-primary" onclick="loadMyHistory()">Load My Data</button>
+                </div>
+            </section>
+
+        </main>
+        
+        <!-- GLOBAL TERMINAL OUTPUT CARD (For C++ Responses) -->
+        <div id="output-container" class="output-container hidden">
+            <div class="output-header">
+                <h3>System Results</h3>
+                <button onclick="document.getElementById('output-container').classList.add('hidden')" class="close-btn">✖</button>
+            </div>
+            <pre id="output-terminal" class="term"></pre>
+        </div>
+    </div>
+
+    <!-- MODALS FOR RECEPTIONIST ACTIONS -->
+    <div id="registerPatientModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('registerPatientModal')">&times;</span>
+            <h2>Register New Patient</h2>
+            <form id="form-register" class="vertical-form">
+                <input type="text" id="reg-id" required placeholder="Generate ID (e.g. P101)">
+                <input type="text" id="reg-name" required placeholder="Full Name">
+                <input type="number" id="reg-age" required placeholder="Age">
+                <input type="text" id="reg-phone" required placeholder="Phone Number">
+                <button type="submit" class="btn-primary">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="addVisitModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('addVisitModal')">&times;</span>
+            <h2>Add Visit</h2>
+            <form id="form-visit" class="vertical-form">
+                <input type="text" id="vis-id" required placeholder="Patient ID">
+                <input type="date" id="vis-date" required>
+                <input type="text" id="vis-diag" required placeholder="Diagnosis">
+                <input type="text" id="vis-pres" required placeholder="Prescription">
+                <button type="submit" class="btn-primary">Save Visit</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="patientHistoryModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('patientHistoryModal')">&times;</span>
+            <h2>Search Patient</h2>
+            <form id="form-history" class="vertical-form">
+                <input type="text" id="hist-id" required placeholder="Patient ID">
+                <button type="submit" class="btn-primary">Fetch Data</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="reportsModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('reportsModal')">&times;</span>
+            <h2>System Reports</h2>
+            <form id="form-report-frequent" class="vertical-form mb-4 border-b pb-4">
+                <label>Frequent Visitors (Requires N visits)</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="number" id="rep-freq-n" required placeholder="ex: 2">
+                    <button type="submit" class="btn-primary">Run</button>
+                </div>
+            </form>
+            <form id="form-report-month" class="vertical-form">
+                <label>Total Visits For Month</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="month" id="rep-month" required>
+                    <button type="submit" class="btn-primary">Run</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EMSCRIPTEN RUNTIME -->
+    <script src="clinic.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
