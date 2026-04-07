@@ -101,13 +101,14 @@
 
         </main>
         
-        <!-- GLOBAL TERMINAL OUTPUT CARD (For C++ Responses) -->
+        <!-- GLOBAL NEAT RESULTS OUTPUT CARD (For C++ Responses) -->
         <div id="output-container" class="output-container hidden">
             <div class="output-header">
                 <h3>System Results</h3>
-                <button onclick="document.getElementById('output-container').classList.add('hidden')" class="close-btn">✖</button>
+                <button onclick="document.getElementById('output-container').classList.add('hidden'); document.getElementById('neat-results').innerHTML='';" class="close-btn">✖</button>
             </div>
-            <pre id="output-terminal" class="term"></pre>
+            <div id="neat-results"></div>
+            <pre id="output-terminal" class="term hidden"></pre>
         </div>
     </div>
 
