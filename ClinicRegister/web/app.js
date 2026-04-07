@@ -9,6 +9,7 @@ const outputContainer = document.getElementById('output-container');
 const outputTerminal = document.getElementById('output-terminal');
 
 let printBuffer = [];
+let loginType = 'receptionist';
 
 // Override Emscripten's standard output print to buffer into our Neat parser
 window.Module = window.Module || {};
