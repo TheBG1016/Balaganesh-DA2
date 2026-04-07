@@ -178,6 +178,18 @@ document.getElementById('form-register').addEventListener('submit', (e) => {
     callWasmNeat('registerPatient_js', ['string', 'string', 'number', 'string'], [id, name, age, phone]);
     closeModal('registerPatientModal');
     e.target.reset();
+
+    if (printBuffer.length > 0 && !printBuffer[0].includes('Error')) {
+        try {
+            const activeFS = window.FS || (window.Module && window.Module.FS);
+            if(activeFS) {
+                let existing = '';
+                try { existing = activeFS.readFile('patients.txt', { encoding: 'utf8' }); } catch(err){}
+                activeFS.writeFile('patients.txt', existing + `${id}|${name}|${age}|${phone}\n`);
+                if(loginType === 'receptionist') populateDashboard();
+            }
+        } catch(err) {}
+    }
 });
 
 document.getElementById('form-visit').addEventListener('submit', (e) => {
@@ -190,6 +202,18 @@ document.getElementById('form-visit').addEventListener('submit', (e) => {
     callWasmNeat('addVisit_js', ['string', 'string', 'string', 'string'], [id, date, diag, pres]);
     closeModal('addVisitModal');
     e.target.reset();
+
+    if (printBuffer.length > 0 && !printBuffer[0].includes('Error')) {
+        try {
+            const activeFS = window.FS || (window.Module && window.Module.FS);
+            if(activeFS) {
+                let existing = '';
+                try { existing = activeFS.readFile('visits.txt', { encoding: 'utf8' }); } catch(err){}
+                activeFS.writeFile('visits.txt', existing + `${id}|${date}|${diag}|${pres}\n`);
+                if(loginType === 'receptionist') populateDashboard();
+            }
+        } catch(err) {}
+    }
 });
 
 document.getElementById('form-history').addEventListener('submit', (e) => {
