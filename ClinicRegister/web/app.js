@@ -269,21 +269,13 @@ function populateDashboard() {
             if(patients.length === 0) {
                 pList.innerHTML = '<p style="color:var(--text-secondary); font-size:13px; text-align:center; padding: 20px;">No patients found.</p>';
             } else {
-                patients.slice(-5).reverse().forEach(p => {
+                patients.forEach(p => {
                     const parts = p.split('|');
                     if(parts.length >= 4) {
-                        const initials = parts[1].substring(0, 2).toUpperCase();
-                        let vCount = visits.filter(v => v.startsWith(parts[0] + '|')).length;
                         pList.innerHTML += `
-                        <div class="patient-item">
-                            <div class="patient-left">
-                                <div class="patient-avatar">${initials}</div>
-                                <div class="patient-info">
-                                    <h4>${parts[1]}</h4>
-                                    <p>${parts[0]} · Age ${parts[2]}</p>
-                                </div>
-                            </div>
-                            <div class="patient-visits ${vCount<3?'few':''}">${vCount} visit${vCount!=1?'s':''}</div>
+                        <div style="border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 12px; background: var(--bg-card); display: flex; flex-direction: column; gap: 4px;">
+                            <h4 style="margin: 0; color: var(--text-primary); font-size: 15px;">${parts[1]}</h4>
+                            <p style="margin: 0; color: var(--text-secondary); font-size: 13px;">Age: ${parts[2]} · ID: ${parts[0]}</p>
                         </div>`;
                     }
                 });
