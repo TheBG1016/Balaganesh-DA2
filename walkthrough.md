@@ -26,4 +26,4 @@ You can compile and run locally. Since you have `g++` configured:
    git push -u origin main
    ```
 2. Once pushed, navigate to your GitHub repo -> Actions. Wait for the `Build and Deploy to GitHub Pages` workflow to complete.
-3. Turn on GitHub Pages (Settings -> Pages -> Ensure it's using the new GitHub Actions workflow integration) and you will automatically have the C++ terminal UI hosted via Emscripten locally on `YourUsername.github.io/YourRepository`!
+3. Turn on GitHub Pages (Settings -> Pages -> Ensure it's using the new GitHub Actions workflow integration) and you will automatically have the C++ terminal UI hosted via Emscripten locally on `YourUsername.github.io/YourRepository` !
