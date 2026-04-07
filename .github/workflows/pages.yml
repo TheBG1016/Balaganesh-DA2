@@ -1,0 +1,54 @@
+name: Build and Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+
+      - name: Build WebAssembly
+        run: |
+          mkdir build
+          cd build
+          emcc ../ClinicRegister/main.cpp ../ClinicRegister/HospitalSystem.cpp ../ClinicRegister/Patient.cpp ../ClinicRegister/Visit.cpp -o index.html -s ASYNCIFY -O3 -s EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]' -s NO_EXIT_RUNTIME=0 --preload-file ../ClinicRegister/patients.txt@patients.txt --preload-file ../ClinicRegister/visits.txt@visits.txt || emcc ../ClinicRegister/main.cpp ../ClinicRegister/HospitalSystem.cpp ../ClinicRegister/Patient.cpp ../ClinicRegister/Visit.cpp -o index.html -s ASYNCIFY -O3 -s EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]' -s NO_EXIT_RUNTIME=0
+          # We provide a default fallback build if preload files don't exist yet
+
+      - name: Setup Preload Files Script (Fail-safe)
+        run: |
+          if [ ! -f build/patients.txt ]; then
+            touch build/patients.txt build/visits.txt
+            cd build
+            emcc ../ClinicRegister/main.cpp ../ClinicRegister/HospitalSystem.cpp ../ClinicRegister/Patient.cpp ../ClinicRegister/Visit.cpp -o index.html -s ASYNCIFY -O3 -s EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]' -s NO_EXIT_RUNTIME=0 --preload-file patients.txt@patients.txt --preload-file visits.txt@visits.txt
+          fi
+
+      - name: Upload Artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'build'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
