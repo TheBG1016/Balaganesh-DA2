@@ -3,7 +3,7 @@ const loginView = document.getElementById('login-view');
 const recDashboard = document.getElementById('receptionist-dashboard');
 const patDashboard = document.getElementById('patient-dashboard');
 const sidebarNav = document.getElementById('sidebarNav');
-
+const appSidebar = document.getElementById('appSidebar');
 const outputContainer = document.getElementById('output-container');
 const outputTerminal = document.getElementById('output-terminal');
 
@@ -52,6 +52,7 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     e.preventDefault();
     loginView.classList.add('hidden');
     sidebarNav.classList.remove('hidden');
+    appSidebar.classList.remove('hidden');
     clearTerminal();
     
     const recOnlyBtns = document.querySelectorAll('.rec-only');
@@ -68,6 +69,7 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
             alert("Invalid Login: This Patient ID has not been registered yet.");
             loginView.classList.remove('hidden');
             sidebarNav.classList.add('hidden');
+            appSidebar.classList.add('hidden');
             return;
         }
 
@@ -82,6 +84,7 @@ function logout() {
     recDashboard.classList.add('hidden');
     patDashboard.classList.add('hidden');
     sidebarNav.classList.add('hidden');
+    appSidebar.classList.add('hidden');
     outputContainer.classList.add('hidden');
     loginView.classList.remove('hidden');
     loggedInPatientId = null;
