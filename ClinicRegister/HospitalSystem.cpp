@@ -5,6 +5,11 @@
 
 HospitalSystem::HospitalSystem() {
     loadData();
+    if (patients.empty()) {
+        registerPatient("P001", "John Doe", 45, "555-1234");
+        registerPatient("P002", "Jane Smith", 30, "555-5678");
+        registerPatient("P003", "Alice Johnson", 60, "555-8765");
+    }
 }
 
 HospitalSystem::~HospitalSystem() {
