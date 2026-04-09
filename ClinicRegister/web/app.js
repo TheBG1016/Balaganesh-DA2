@@ -374,7 +374,21 @@ window.addEventListener('load', () => {
     setTimeout(() => {
         if (!window.Module || !window.Module.ccall) return;
         
-        const savedPatients = localStorage.getItem('patients_db');
+        let savedPatients = localStorage.getItem('patients_db');
+        if (!savedPatients) {
+            savedPatients = `P001|John Doe|45|555-1234
+P002|Jane Smith|30|555-5678
+P003|Alice Johnson|60|555-8765
+P004|Bob Williams|25|555-4321
+P005|Charlie Brown|12|555-9999
+P006|Diana Prince|29|555-8888
+P007|Ethan Hunt|40|555-7777
+P008|Fiona Gallagher|35|555-6666
+P009|George R|55|555-5555
+P010|Hannah Abbott|19|555-4444\n`;
+            localStorage.setItem('patients_db', savedPatients);
+        }
+
         if (savedPatients) {
             savedPatients.split('\n').filter(p=>p.trim()!=='').forEach(line => {
                 const parts = line.split('|');
@@ -384,7 +398,34 @@ window.addEventListener('load', () => {
             });
         }
 
-        const savedVisits = localStorage.getItem('visits_db');
+        let savedVisits = localStorage.getItem('visits_db');
+        if (!savedVisits) {
+            savedVisits = `P001|2023-01-15|Flu|Rest and hydration
+P001|2023-02-10|Follow up|Vitamins
+P001|2023-05-22|Allergy|Antihistamines
+P002|2023-03-05|Sprained Ankle|Ice and Rest
+P002|2023-03-20|Follow up|Physical Therapy
+P003|2023-04-11|Hypertension|Lisinopril
+P003|2023-06-15|Routine Checkup|None
+P003|2023-08-10|High Cholesterol|Statins
+P003|2023-10-01|Follow up|Continue Medications
+P004|2023-07-07|Migraine|Painkillers
+P005|2023-01-10|Common Cold|Cough syrup
+P005|2023-09-05|Fever|Acetaminophen
+P006|2023-05-18|Back Pain|Muscle Relaxants
+P006|2023-06-02|Follow up|Physical Therapy
+P006|2023-07-20|Checkup|None
+P007|2023-11-11|Knee Injury|Surgery Consult
+P007|2023-11-25|Post-op|Rest
+P007|2023-12-10|Rehab|Physical Therapy
+P007|2023-12-24|Follow up|None
+P007|2024-01-15|Final Check|Cleared
+P008|2023-08-20|Asthma|Inhaler
+P009|2023-02-14|Diabetes Check|Insulin
+P009|2023-06-14|Routine Check|Keep Diet\n`;
+            localStorage.setItem('visits_db', savedVisits);
+        }
+
         if (savedVisits) {
             savedVisits.split('\n').filter(p=>p.trim()!=='').forEach(line => {
                 const parts = line.split('|');
